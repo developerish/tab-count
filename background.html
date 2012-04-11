@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+
+  tabCount = 0;
+
+  // set icon's tooltip
+  function updateBadgeTitle() {
+    iconTitle = 'You have ' + tabCount + ' open tab(s).'
+    chrome.browserAction.setTitle({title: iconTitle});
+  }
+
+  // set icon's text
+  function updateBadgeText() {
+    chrome.browserAction.setBadgeText({text: String(tabCount)});
+  }
+
+  // update badge text and title
+  function updateBadge(operation) {
+    if (operation == 'add') {
+      tabCount += 1;
+    }
+    else if (operation == 'sub') {
+      tabCount -= 1;
+    }
+    updateBadgeText();
+    updateBadgeTitle();
+  }
+ 
+  // count all tabs in all windows when extension loads 
+  chrome.windows.getAll({populate: true}, function (window_list) {
+    for(var i=0; i<window_list.length; i++) { 
+      tabCount += window_list[i].tabs.length;
+    }     
+    updateBadge(null);
+  });   
+
+             
+  // action taken when a new tab is opened
+  chrome.tabs.onCreated.addListener(function(tab) {
+    updateBadge('add')}); 
+    
+  // action taken when a tab is closed
+  chrome.tabs.onRemoved.addListener(function(tab) {
+    updateBadge('sub')}); 
+    
+</script>
+</head>
+</html>
