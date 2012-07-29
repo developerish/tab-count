@@ -1,5 +1,5 @@
 {
-  "name": "Tab Count.",
+  "name": "Tab Count",
   "version": "1.3",
   "description": "Displays number of tabs open and allows you to select and/or close them",
   "background_page": "background.html",
