@@ -1,70 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head>
-<style>
-  body {
-    width: 300px;
-    font-size: 12px;
-    font-family: Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 0 10px 0 10px;
-  }
-  p.box {
-    background-color:#F0F0F0;
-    margin:10px;
-    padding:20px;
-    border:1px solid #606060;
-  }
 
-  a.redlink {
-    color: #FF0000;
-  }
-</style>
-
-<script type="text/javascript">
-
-  // function to display the selected tab
-  function openTab(tabID) {
-    chrome.tabs.update(tabID, {selected:true});
-  }
-
-  // function to close the selected tab
-  function closeTab(tabID) {
-    chrome.tabs.remove(tabID);
-    // reload popup.html to refresh the count and links
-    window.location.reload();
-  }  
-
-  // get all tabs in the window, display count and details
-  chrome.tabs.getAllInWindow(null, function(tabs) {
-    numTabs = tabs.length;
-    lenText = 'Number of tabs open on this window:<strong> ' + 
-              numTabs + '</strong>';
-    document.getElementById('windowTabs').innerHTML = lenText;
-
-    html = '<table>';
-    for (var i=0; i<numTabs; i++) {
-      html += '<tr>';
-      // display 16x16 sized favicon
-      html += '<td><img src=\"' + tabs[i].favIconUrl  + 
-              '\" width=\"16\" height=\"16\"></td>';
-      // display 'x' as the option to close the tab
-      html += '<td><a href=\"#\" class=\"redlink\" onClick=\"closeTab(' + 
-              tabs[i].id + ');\">' + 'x</a></td>';
-      // display page title as a link to select it
-      html += '<td><a href=\"#\" onClick=\"openTab(' + 
-              tabs[i].id + ');\" title=\"' + tabs[i].url  + '\">' + 
-              tabs[i].title  + '</a></td>';
-      html += '</tr>';
-    }
-    html += '</table>';
-    document.getElementById('tabsTable').innerHTML = html;
-    });
-
-</script>
-</head>
-<body>
-<p class='box' id='windowTabs'></p>
-<p class='box' id='tabsTable'></p>
-</body>
+  <head>
+    <style>
+      body {
+        width: 300px;
+        font-size: 12px;
+        font-family: Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0 10px 0 10px;
+      }
+      p.box {
+        background-color:#F0F0F0;
+        margin:10px;
+        padding:10px;
+        border:1px solid #606060;
+      }
+      a.redlink {
+        color: #FF0000;
+      }
+    </style>
+    <script src="js/popup.js"></script>
+  </head>
+  
+  <body>
+    <p class='box' id='windowTabs'></p>
+    <table id='tabsTable'></table>
+  </body>
+  
 </html>

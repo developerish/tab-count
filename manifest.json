@@ -1,10 +1,17 @@
 {
+  "manifest_version": 2,
+  
   "name": "Tab Count",
-  "version": "1.3",
-  "description": "Displays number of tabs open and allows you to select and/or close them",
-  "background_page": "background.html",
+  "version": "2.1",
+  "description": "Displays the number of open tabs and allows you to select and/or close them",
+  
+  "options_page": "options.html",
+  
+  "background": {
+    "page": "background.html"
+  },
   "browser_action": {
-    "popup": "popup.html",
+    "default_popup": "popup.html",
     "default_name": "Tab Count",
     "default_icon": "images/icon19.png",
     "default_title": "Tab Count"

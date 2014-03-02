@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>TabCount Options</title>
+  </head>
+
+  <body>
+    <h3>Popup window</h3>
+    <form name="popupOptionsForm">
+      <label><input type="radio" id ="defaultPopupSelection" name="tabCountRadios" value="currentWindow">List tabs from the current window only<br></label>
+      <label><input type="radio" name="tabCountRadios" value="allWindows">List tabs from all windows<br></label>
+    </form>
+    <br>
+    <h3>Icon badge</h3>
+    <h5>Changing selection will reload the extension and close this page.</h5>
+    <form name="badgeOptionsForm">
+      <label><input type="radio" name="badgeCountRadios" value="currentWindow">Show count for the current window only<br></label>
+      <label><input type="radio" id ="defaultBadgeSelection" name="badgeCountRadios" value="allWindows">Show count for all windows<br></label>
+    </form>
+    <br>
+    <div id="status"></div>
+    <br>
+    <hr>
+    <h3>Current Stats</h3>
+    Total number of windows: <span id="windowsCount"></span> <br>
+    Total number of tabs: <span id="tabsCount"></span> <br>
+    
+    <input type="button" id="refreshButton" value="Refresh Stats">
+  </body>
+
+  <script src="js/options.js"></script>
+
+</html>
