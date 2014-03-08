@@ -28,7 +28,7 @@ function restore_options() {
     }
   }
   // restore options for badgeDisplay
-  var selection = localStorage["badgeDisplayOption"];
+/*  var selection = localStorage["badgeDisplayOption"];
   var radios = document.badgeOptionsForm.badgeCountRadios;
   if (!selection) {
     document.getElementById("defaultBadgeSelection").checked = true;
@@ -37,7 +37,7 @@ function restore_options() {
     if (radios[i].value == selection) {
       radios[i].checked = true;
     }
-  }
+  }*/
 }
 
 document.addEventListener("DOMContentLoaded", restore_options);
@@ -52,18 +52,18 @@ for (var i = 0; i < radios.length; i++) {
   })(radios[i].value));
 }
 
-var radios = document.badgeOptionsForm.badgeCountRadios;
+/*var radios = document.badgeOptionsForm.badgeCountRadios;
 for (var i = 0; i < radios.length; i++) {
   radios[i].addEventListener("click", (function(value) {
     return function() {
       save_options("badgeCount", value);
     }
   })(radios[i].value));
-}
+}*/
 
 document.getElementById("refreshButton").addEventListener("click", function() {
   location.reload();
 });
 
 document.getElementById("windowsCount").innerHTML = localStorage["windowsCount"];
-document.getElementById("tabsCount").innerHTML = localStorage["AllWindowsTabsCount"];
+document.getElementById("tabsCount").innerHTML = localStorage["allWindowsTabsCount"];

@@ -2,8 +2,8 @@
   "manifest_version": 2,
   
   "name": "Tab Count",
-  "version": "2.1",
-  "description": "Displays the number of open tabs and allows you to select and/or close them",
+  "version": "2.6",
+  "description": "Displays the count and list of open tabs from current or all windows (configurable) and allows you to select and/or close them.",
   
   "options_page": "options.html",
   

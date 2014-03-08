@@ -6,7 +6,7 @@ function getCurrentWindowTabCount() {
   });
 }
 
-// get tabs in current window
+//get tabs in current window
 function getCurrentWindowTabs(callback) {
   chrome.tabs.query({currentWindow:true}, function(tabs) {
     callback(tabs);
@@ -31,25 +31,26 @@ function displayResults(tabs){
     var cell3 = row.insertCell(2);
     
     cell1.innerHTML = "<img src=" + tabs[i].favIconUrl + " width='16' height='16'>";
-    cell2.innerHTML = "<a href=# class='redlink'>X</a>";
-    cell3.innerHTML = "<span title='" + tabs[i].url + "'>" + "<a href=#>" + tabs[i].title + "</a></span>";
+    cell2.innerHTML = "<span style=cursor:pointer><font color=red>X</font></span>";
+    cell3.innerHTML = "<span style=cursor:pointer title='" + tabs[i].url + "'>" +  tabs[i].title + "</span>";
 
     cell2.addEventListener("click", (function(tabID) {
       return function() {
         closeTab(tabID);
       }
     })(tabs[i].id));
-
-    cell3.addEventListener("click", (function(tabID) {
+    
+    cell3.addEventListener("click", (function(tabID, windowID) {
       return function() {
-        openTab(tabID);
+        openTab(tabID, windowID);
       }
-    })(tabs[i].id));
+    })(tabs[i].id, tabs[i].windowId));
   }
 }
 
 // function to display the selected tab
-function openTab(tabID) {
+function openTab(tabID, windowID) {
+  chrome.windows.update(windowID, {focused:true});
   chrome.tabs.update(tabID, {active:true});
 }
 
