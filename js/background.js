@@ -1,6 +1,3 @@
-//This feature is currently disabled from options.html and options.js
-currentWindowTabCount = null;
-
 // set icon's tooltip
 function updateBadgeTitle(count) {
   iconTitle = 'You have ' + count + ' open tab(s).';
@@ -18,19 +15,6 @@ function updateBadgeText() {
     //This feature is currently disabled from options.html and options.js
     count = getCurrentWindowTabs(updateCurrentWindowBadge);
   }
-}
-
-//This feature is currently disabled from options.html and options.js
-function updateCurrentWindowBadge(count) {
-  chrome.browserAction.setBadgeText({text: String(count)});
-  updateBadgeTitle(count);
-}
-
-//This feature is currently disabled from options.html and options.js
-function getCurrentWindowTabs(callback) {
-  chrome.tabs.query({currentWindow:true}, function(tabs) {
-    callback(tabs.length);
-  });
 }
 
 //action taken when a new tab is opened
