@@ -7,18 +7,28 @@
   
   "options_page": "options.html",
   
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+  
   "background": {
     "page": "background.html"
   },
+  
   "browser_action": {
     "default_popup": "popup.html",
     "default_name": "Tab Count",
     "default_icon": "images/icon19.png",
     "default_title": "Tab Count"
   },
+  
   "icons": { "16": "images/icon16.png",
              "48": "images/icon48.png",
-             "128": "images/icon128.png" },
+             "128": "images/icon128.png" 
+    
+  },
+  
   "permissions": [
     "tabs"
   ]

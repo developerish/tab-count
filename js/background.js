@@ -3,7 +3,7 @@ currentWindowTabCount = null;
 
 // set icon's tooltip
 function updateBadgeTitle(count) {
-  iconTitle = 'You have ' + count + ' open tab(s).'
+  iconTitle = 'You have ' + count + ' open tab(s).';
   chrome.browserAction.setTitle({title: iconTitle});
 }
 
@@ -34,12 +34,10 @@ function getCurrentWindowTabs(callback) {
 }
 
 //action taken when a new tab is opened
-chrome.tabs.onCreated.addListener(function(tab) {
-  getAllStats(displayResults)});
+chrome.tabs.onCreated.addListener(function(tab) {getAllStats(displayResults)});
 
 //action taken when a tab is closed
-chrome.tabs.onRemoved.addListener(function(tab) {
-  getAllStats(displayResults)});
+chrome.tabs.onRemoved.addListener(function(tab) {getAllStats(displayResults)});
 
 //action taken when a new window is opened
 chrome.windows.onCreated.addListener(function(tab) {
