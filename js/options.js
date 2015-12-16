@@ -2,6 +2,8 @@
 function save_options(type, value) {
   if (type == "popupCount") {
     localStorage["popupDisplayOption"] = value;
+  } else if (type == 'tabDedupe') {
+    localStorage["tabDedupe"] = value;
   } else {
     localStorage["badgeDisplayOption"] = value;
     chrome.runtime.reload();
@@ -27,6 +29,10 @@ function restore_options() {
       radios[i].checked = true;
     }
   }
+  
+  // restore options for tabDedupe
+  document.getElementById("tabDedupe").checked = bool(localStorage["tabDedupe"]);
+
   // restore options for badgeDisplay
 /*  var selection = localStorage["badgeDisplayOption"];
   var radios = document.badgeOptionsForm.badgeCountRadios;
@@ -51,6 +57,14 @@ for (var i = 0; i < radios.length; i++) {
     }
   })(radios[i].value));
 }
+
+// Add event listener for tabDedupe checkbox.
+var checkbox = document.getElementById("tabDedupe");
+checkbox.addEventListener("click", (function(value) {
+    return function() {
+      save_options("tabDedupe", value);
+    }
+  })(checkbox.checked));
 
 /*var radios = document.badgeOptionsForm.badgeCountRadios;
 for (var i = 0; i < radios.length; i++) {
