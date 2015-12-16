@@ -85,7 +85,7 @@ janitorCheckbox.addEventListener("click", (function(value) {
 
 // Add event listener for tabJanitor checkbox.
 var janitorDays = document.getElementById("tabJanitorDays");
-janitorDays.addEventListener("change", (function(value) {
+janitorDays.addEventListener("input", (function(value) {
     return function() {
       save_options("tabJanitorDays", value);
     }
