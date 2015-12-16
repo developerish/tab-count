@@ -84,13 +84,10 @@ janitorCheckbox.addEventListener("click", (function(value) {
   })(janitorCheckbox.checked));
 
 // Add event listener for tabJanitor checkbox.
-var janitorDays = document.getElementById("tabJanitorDays");
-janitorDays.addEventListener("input", (function(value) {
-    return function() {
-      save_options("tabJanitorDays", value);
-    }
-  })(janitorDays.valueAsNumber));
-  
+document.getElementById("tabJanitorDays").oninput = function() {
+  save_options("tabJanitorDays", document.getElementById("tabJanitorDays").valueAsNumber);
+};
+
 /*var radios = document.badgeOptionsForm.badgeCountRadios;
 for (var i = 0; i < radios.length; i++) {
   radios[i].addEventListener("click", (function(value) {
