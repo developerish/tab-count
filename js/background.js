@@ -51,7 +51,7 @@ function displayResults(window_list) {
 
 getAllStats(displayResults);
 
-function registerTabDedupeHandler = function() {
+function registerTabDedupeHandler() {
   chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab) {
       if (changeInfo.url) {
