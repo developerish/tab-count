@@ -50,3 +50,34 @@ function displayResults(window_list) {
 }
 
 getAllStats(displayResults);
+
+function registerTabDedupeHandler() {
+  chrome.tabs.onUpdated.addListener(
+    function(tabId, changeInfo, tab) {
+      if (changeInfo.url) {
+        // check if any other tabs with different Ids exist with same URL
+        chrome.tabs.query({'url': changeInfo.url}, function(tabs) {
+          if(tabs.length == 2) {
+            var oldTab = tabs[0].id == tabId ? tabs[1] : tabs[0];
+            // This is a new duplicate
+            var dedupe = confirm(
+                "Duplicate tab detected. Switch to existing open tab?");
+            if (dedupe) {
+              // Switch to existing tab and make it active.
+              chrome.tabs.update(oldTab.id, {'active': true}, function() {
+                // Make sure the window of that tab is also made active
+                chrome.windows.update(oldTab.windowId, {'focused': true}, function() {
+                  // And kill the newly opened tab.
+                  chrome.tabs.remove(tabId);
+                });
+              });
+            }
+          }
+        });
+      }
+    });
+};
+
+if (localStorage["tabDedupe"]) {
+  registerTabDedupeHandler();
+}
