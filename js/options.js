@@ -1,5 +1,6 @@
 //Save options to localstorage
 function save_options(type, value) {
+  console.log('type: ' + type + ', value: ' + value);
   if (type == "popupCount") {
     localStorage["popupDisplayOption"] = value;
   } else if (type == 'tabDedupe') {
@@ -31,7 +32,7 @@ function restore_options() {
   }
   
   // restore options for tabDedupe
-  document.getElementById("tabDedupe").checked = bool(localStorage["tabDedupe"]);
+  document.getElementById("tabDedupe").checked = Boolean(localStorage["tabDedupe"]);
 
   // restore options for badgeDisplay
 /*  var selection = localStorage["badgeDisplayOption"];
