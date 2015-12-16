@@ -89,7 +89,7 @@ janitorDays.addEventListener("change", (function(value) {
     return function() {
       save_options("tabJanitorDays", value);
     }
-  })(janitorDays.value));
+  })(janitorDays.valueAsNumber));
   
 /*var radios = document.badgeOptionsForm.badgeCountRadios;
 for (var i = 0; i < radios.length; i++) {
