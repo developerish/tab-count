@@ -20,31 +20,53 @@ function getAllTabs(callback) {
   });
 }
 
-function displayResults(tabs){
+//search tab
+function searchTab(tab, search){
+  if (typeof search === 'undefined') return true;
+  var tabText = (tab.url + tab.title).toLowerCase();
+  if (tabText.indexOf(search.toLowerCase()) > -1){
+    return true;
+  }
+  return false;
+}
+
+function createPopup(tabs){
+  document.getElementById('search').addEventListener("input", (function(tabs) {
+    return function() {
+      var search = event.target.value;
+      displayResults(tabs, search);
+    }
+  })(tabs));
+  displayResults(tabs);
+}
+
+function displayResults(tabs, search){
   getCurrentWindowTabCount();
   numTabs = tabs.length;
   var table = document.getElementById('tabsTable');
+  table.innerHTML = "";
   for (var i=0; i<numTabs; i++) {
-    var row = table.insertRow(i);
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    
-    cell1.innerHTML = "<img src=" + tabs[i].favIconUrl + " width='16' height='16'>";
-    cell2.innerHTML = "<span style=cursor:pointer><font color=red>X</font></span>";
-    cell3.innerHTML = "<span style=cursor:pointer title='" + tabs[i].url + "'>" +  tabs[i].title + "</span>";
+    if (searchTab(tabs[i], search)){
+      var row = table.insertRow();
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      cell1.innerHTML = "<img src=" + tabs[i].favIconUrl + " width='16' height='16'>";
+      cell2.innerHTML = "<span style=cursor:pointer><font color=red>X</font></span>";
+      cell3.innerHTML = "<span style=cursor:pointer title='" + tabs[i].url + "'>" +  tabs[i].title + "</span>";
 
-    cell2.addEventListener("click", (function(tabID) {
-      return function() {
-        closeTab(tabID);
-      }
-    })(tabs[i].id));
-    
-    cell3.addEventListener("click", (function(tabID, windowID) {
-      return function() {
-        openTab(tabID, windowID);
-      }
-    })(tabs[i].id, tabs[i].windowId));
+      cell2.addEventListener("click", (function(tabID) {
+        return function() {
+          closeTab(tabID);
+        }
+      })(tabs[i].id));
+
+      cell3.addEventListener("click", (function(tabID, windowID) {
+        return function() {
+          openTab(tabID, windowID);
+        }
+      })(tabs[i].id, tabs[i].windowId));
+    }
   }
 }
 
@@ -64,8 +86,8 @@ function closeTab(tabID) {
 var tabsDisplayOption = localStorage["popupDisplayOption"];
 // if extension is just installed or reloaded, tabsDisplayOption will not be set
 if (typeof tabsDisplayOption == "undefined" || tabsDisplayOption == "currentWindow") {
-  getCurrentWindowTabs(displayResults);
+  getCurrentWindowTabs(createPopup);
 } else {
   //getCurrentWindowTabCount();
-  getAllTabs(displayResults);
+  getAllTabs(createPopup);
 }

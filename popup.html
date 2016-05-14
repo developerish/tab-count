@@ -11,10 +11,26 @@
         padding: 0 10px 0 10px;
       }
       p.box {
-        background-color:#F0F0F0;
-        margin:10px;
-        padding:10px;
-        border:1px solid #606060;
+        margin: 15px 0px 10px 0px;
+      }
+      #search {
+        margin: 0px 0px 10px 0px;
+        padding: 5px;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      #tabsTable {
+        position: relative;
+        margin-bottom: 5px;
+        right: 3px;
+      }
+      #tabsTable tr {
+        display: block;
+        width: 300px;
+      }
+      #tabsTable td {
+        padding: 0px 1px;
       }
       a.redlink {
         color: #FF0000;
@@ -22,10 +38,11 @@
     </style>
     <script src="js/popup.js"></script>
   </head>
-  
+
   <body>
     <p class='box' id='windowTabs'></p>
+    <input type="search" id="search" placeholder="Search" autofocus>
     <table id='tabsTable'></table>
   </body>
-  
+
 </html>
