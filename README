@@ -1,3 +1,8 @@
-Source for Google Chrome browser's TabCount extension.
+Tab Count Chrome Extension
+==========================
 
-Chrome store link: https://chrome.google.com/webstore/detail/cfokcacdaonnckdmopmcgeanhkebeaio
+This repository contains the source code for the **Tab Count** Chrome extension.
+The extension displays the number of open tabs, lets you manage them, and now
+uses Manifest V3 with a service worker background script.
+
+Chrome Web Store: <https://chrome.google.com/webstore/detail/cfokcacdaonnckdmopmcgeanhkebei>
