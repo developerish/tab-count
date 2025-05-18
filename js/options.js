@@ -1,105 +1,75 @@
-//Save options to localstorage
-function save_options(type, value) {
+"use strict";
+
+async function save_options(type, value) {
   console.log('type: ' + type + ', value: ' + value);
-  if (type == "popupCount") {
-    localStorage["popupDisplayOption"] = value;
-  } else if (type == 'tabDedupe') {
-    localStorage["tabDedupe"] = value;
-  } else if (type == 'tabJanitor') {
-    localStorage["tabJanitor"] = value;
-  } else if (type == 'tabJanitorDays') {
-    localStorage["tabJanitorDays"] = value;
+  if (type === 'popupCount') {
+    await chrome.storage.local.set({ popupDisplayOption: value });
+  } else if (type === 'tabDedupe') {
+    await chrome.storage.local.set({ tabDedupe: value });
+  } else if (type === 'tabJanitor') {
+    await chrome.storage.local.set({ tabJanitor: value });
+  } else if (type === 'tabJanitorDays') {
+    await chrome.storage.local.set({ tabJanitorDays: value });
   } else {
-    localStorage["badgeDisplayOption"] = value;
+    await chrome.storage.local.set({ badgeDisplayOption: value });
     chrome.runtime.reload();
   }
-  //Update selection status
-  var status = document.getElementById("status");
-  status.innerHTML = "Selection Saved...";
-  setTimeout(function() {
-    status.innerHTML = "";
+  const status = document.getElementById('status');
+  status.innerHTML = 'Selection Saved...';
+  setTimeout(() => {
+    status.innerHTML = '';
   }, 750);
 }
 
-//Restore selection from localstorage
-function restore_options() {
-  // restore options for popupDisplay
-  var selection = localStorage["popupDisplayOption"];
-  var radios = document.popupOptionsForm.tabCountRadios;
-  if (!selection) {
-    document.getElementById("defaultPopupSelection").checked = true;
-  }
-  for (var i = 0; i < radios.length; i++) {
-    if (radios[i].value == selection) {
-      radios[i].checked = true;
-    }
-  }
-  
-  // restore options for tabDedupe
-  document.getElementById("tabDedupe").checked = Boolean(localStorage["tabDedupe"]);
-  
-  // Restore tab janitor options.
-  document.getElementById("tabJanitor").checked = Boolean(localStorage["tabJanitor"]);
-  document.getElementById("tabJanitorDays").value = localStorage["tabJanitorDays"] || 5;
+async function restore_options() {
+  const data = await chrome.storage.local.get([
+    'popupDisplayOption',
+    'tabDedupe',
+    'tabJanitor',
+    'tabJanitorDays',
+    'windowsCount',
+    'allWindowsTabsCount'
+  ]);
 
-  // restore options for badgeDisplay
-/*  var selection = localStorage["badgeDisplayOption"];
-  var radios = document.badgeOptionsForm.badgeCountRadios;
+  const selection = data.popupDisplayOption;
+  const radios = document.popupOptionsForm.tabCountRadios;
   if (!selection) {
-    document.getElementById("defaultBadgeSelection").checked = true;
+    document.getElementById('defaultPopupSelection').checked = true;
   }
-  for (var i = 0; i < radios.length; i++) {
-    if (radios[i].value == selection) {
-      radios[i].checked = true;
+  for (const radio of radios) {
+    if (radio.value === selection) {
+      radio.checked = true;
     }
-  }*/
+  }
+
+  document.getElementById('tabDedupe').checked = Boolean(data.tabDedupe);
+  document.getElementById('tabJanitor').checked = Boolean(data.tabJanitor);
+  document.getElementById('tabJanitorDays').value = data.tabJanitorDays || 5;
+
+  document.getElementById('windowsCount').innerHTML = data.windowsCount || 0;
+  document.getElementById('tabsCount').innerHTML = data.allWindowsTabsCount || 0;
 }
 
-document.addEventListener("DOMContentLoaded", restore_options);
+document.addEventListener('DOMContentLoaded', restore_options);
 
-//Add eventlisteners to the radio buttons
-var radios = document.popupOptionsForm.tabCountRadios;
-for (var i = 0; i < radios.length; i++) {
-  radios[i].addEventListener("click", (function(value) {
-    return function() {
-      save_options("popupCount", value);
-    }
-  })(radios[i].value));
+const radios = document.popupOptionsForm.tabCountRadios;
+for (const radio of radios) {
+  radio.addEventListener('click', () => save_options('popupCount', radio.value));
 }
 
-// Add event listener for tabDedupe checkbox.
-var checkbox = document.getElementById("tabDedupe");
-checkbox.addEventListener("click", (function(value) {
-    return function() {
-      save_options("tabDedupe", value);
-    }
-  })(checkbox.checked));
-  
-// Add event listener for tabJanitor checkbox.
-var janitorCheckbox = document.getElementById("tabJanitor");
-janitorCheckbox.addEventListener("click", (function(value) {
-    return function() {
-      save_options("tabJanitor", value);
-    }
-  })(janitorCheckbox.checked));
+document.getElementById('tabDedupe').addEventListener('click', evt => {
+  save_options('tabDedupe', evt.target.checked);
+});
 
-// Add event listener for tabJanitor checkbox.
-document.getElementById("tabJanitorDays").oninput = function() {
-  save_options("tabJanitorDays", document.getElementById("tabJanitorDays").valueAsNumber);
+document.getElementById('tabJanitor').addEventListener('click', evt => {
+  save_options('tabJanitor', evt.target.checked);
+});
+
+document.getElementById('tabJanitorDays').oninput = () => {
+  save_options('tabJanitorDays', document.getElementById('tabJanitorDays').valueAsNumber);
 };
 
-/*var radios = document.badgeOptionsForm.badgeCountRadios;
-for (var i = 0; i < radios.length; i++) {
-  radios[i].addEventListener("click", (function(value) {
-    return function() {
-      save_options("badgeCount", value);
-    }
-  })(radios[i].value));
-}*/
-
-document.getElementById("refreshButton").addEventListener("click", function() {
+document.getElementById('refreshButton').addEventListener('click', () => {
   location.reload();
 });
 
-document.getElementById("windowsCount").innerHTML = localStorage["windowsCount"];
-document.getElementById("tabsCount").innerHTML = localStorage["allWindowsTabsCount"];
