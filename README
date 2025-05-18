@@ -6,15 +6,3 @@ The extension displays the number of open tabs, lets you manage them, and now
 uses Manifest V3 with a service worker background script.
 
 Chrome Web Store: <https://chrome.google.com/webstore/detail/cfokcacdaonnckdmopmcgeanhkebei>
-
-Development
-------------
-
-The project now includes a basic Jest setup. After installing dependencies
-(e.g. with `npm install`) you can run the test suite with:
-
-```
-npm test
-```
-
-Tests currently verify that the extension manifest is using Manifest V3.
