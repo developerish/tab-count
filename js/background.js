@@ -38,23 +38,45 @@ async function displayResults(window_list) {
   updateBadgeText();
 }
 
+const dedupeNotifications = {};
+
 function registerTabDedupeHandler() {
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
     if (changeInfo.url) {
       const tabs = await chrome.tabs.query({ url: changeInfo.url });
       if (tabs.length === 2) {
         const oldTab = tabs[0].id === tabId ? tabs[1] : tabs[0];
-        const dedupe = confirm(
-          "Duplicate tab detected. Switch to existing open tab?"
-        );
-        if (dedupe) {
-          await chrome.tabs.update(oldTab.id, { active: true });
-          await chrome.windows.update(oldTab.windowId, { focused: true });
-          chrome.tabs.remove(tabId);
-        }
+        const notificationId = `dedupe-${tabId}`;
+        dedupeNotifications[notificationId] = {
+          oldTab,
+          newTabId: tabId
+        };
+        chrome.notifications.create(notificationId, {
+          type: "basic",
+          iconUrl: "images/icon128.png",
+          title: "Duplicate tab detected",
+          message: "Switch to existing open tab?",
+          buttons: [{ title: "Switch" }],
+          priority: 0
+        });
       }
     }
   });
+
+  chrome.notifications.onButtonClicked.addListener(
+    async (notificationId, buttonIndex) => {
+      if (dedupeNotifications[notificationId] && buttonIndex === 0) {
+        const { oldTab, newTabId } = dedupeNotifications[notificationId];
+        await chrome.tabs.update(oldTab.id, { active: true });
+        await chrome.windows.update(oldTab.windowId, { focused: true });
+        chrome.tabs.remove(newTabId);
+      }
+      if (dedupeNotifications[notificationId]) {
+        delete dedupeNotifications[notificationId];
+        chrome.notifications.clear(notificationId);
+      }
+    }
+  );
 }
 
 function registerTabJanitor(days) {

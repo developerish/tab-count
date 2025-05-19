@@ -23,6 +23,7 @@
   },
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "notifications"
   ]
 }

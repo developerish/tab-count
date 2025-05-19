@@ -4,12 +4,10 @@
   "description": "Tab Count Chrome Extension",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "node __tests__/manifest.test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "jest": "^29.5.0"
-  }
+  "devDependencies": {}
 }

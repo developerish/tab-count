@@ -1,5 +1,5 @@
+const assert = require('assert');
 const manifest = require('../manifest.json');
 
-test('manifest version is 3', () => {
-  expect(manifest.manifest_version).toBe(3);
-});
+assert.strictEqual(manifest.manifest_version, 3);
+console.log('manifest version is 3');
