@@ -2,7 +2,27 @@ Tab Count Chrome Extension
 ==========================
 
 This repository contains the source code for the **Tab Count** Chrome extension.
-The extension displays the number of open tabs, lets you manage them, and now
-uses Manifest V3 with a service worker background script.
+The extension displays the number of open tabs, lets you manage them, and uses
+Manifest V3 with a service worker background script.
 
-Chrome Web Store: <https://chrome.google.com/webstore/detail/cfokcacdaonnckdmopmcgeanhkebei>
+Chrome Web Store: <https://chrome.google.com/webstore/detail/tab-count/cfokcacdaonnckdmopmcgeanhkebeaio>
+
+Manifest V3
+-----------
+
+The background context is a service worker. Chrome stops that worker when it is
+idle, so features that live only in memory, or that are registered after an
+async startup, do not keep running. This extension is written so those features
+still work after the worker stops:
+
+- Tab, window, alarm, and notification listeners are registered when the
+  service worker starts, before any `await`. Duplicate detection reads the
+  saved setting each time a tab URL changes.
+- Last-used times are stored in `chrome.storage.session`. Auto-close is a
+  `chrome.alarms` job every 60 minutes. It closes tabs that have been idle
+  longer than the chosen number of days.
+- Settings are stored in `chrome.storage.local`. The popup and options page
+  copy any leftover extension `localStorage` values across once.
+- A duplicate tab asks with a Chrome notification, with the choices
+  "Switch to existing" and "Keep both". A service worker cannot call
+  `confirm()`.

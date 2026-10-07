@@ -1,57 +1,71 @@
-"use strict";
-
-async function getCurrentWindowTabCount() {
-  const tabs = await chrome.tabs.query({ currentWindow: true });
-  const lenText = `Number of tabs on this window:<strong> ${tabs.length}</strong>`;
-  document.getElementById('windowTabs').innerHTML = lenText;
+function getCurrentWindowTabCount() {
+  chrome.tabs.query({ currentWindow: true }).then(function (tabs) {
+    const el = document.getElementById("windowTabs");
+    el.replaceChildren();
+    el.append("Number of tabs on this window: ");
+    const strong = document.createElement("strong");
+    strong.textContent = String(tabs.length);
+    el.append(strong);
+  });
 }
 
-async function getCurrentWindowTabs() {
-  return await chrome.tabs.query({ currentWindow: true });
-}
+function displayResults(tabs) {
+  getCurrentWindowTabCount();
+  const table = document.getElementById("tabsTable");
+  table.replaceChildren();
 
-async function getAllTabs() {
-  return await chrome.tabs.query({});
-}
-
-async function displayResults(tabs) {
-  await getCurrentWindowTabCount();
-  const table = document.getElementById('tabsTable');
-  for (const tab of tabs) {
-    const row = table.insertRow(-1);
-    const cell1 = row.insertCell(0);
-    const cell2 = row.insertCell(1);
-    const cell3 = row.insertCell(2);
+  for (let i = 0; i < tabs.length; i++) {
+    const tab = tabs[i];
+    const row = table.insertRow();
+    const iconCell = row.insertCell();
+    const closeCell = row.insertCell();
+    const titleCell = row.insertCell();
 
     if (tab.favIconUrl) {
-      cell1.innerHTML = `<img src=${tab.favIconUrl} width='16' height='16'>`;
+      const img = document.createElement("img");
+      img.src = tab.favIconUrl;
+      img.width = 16;
+      img.height = 16;
+      img.alt = "";
+      iconCell.appendChild(img);
     }
-    cell2.innerHTML = "<span style=cursor:pointer><font color=red>X</font></span>";
-    cell3.innerHTML = `<span style=cursor:pointer title='${tab.url}'>${tab.title}</span>`;
 
-    cell2.addEventListener('click', () => closeTab(tab.id));
-    cell3.addEventListener('click', () => openTab(tab.id, tab.windowId));
+    const close = document.createElement("span");
+    close.textContent = "X";
+    close.style.cursor = "pointer";
+    close.style.color = "red";
+    close.addEventListener("click", function () {
+      closeTab(tab.id);
+    });
+    closeCell.appendChild(close);
+
+    const title = document.createElement("span");
+    title.textContent = tab.title || tab.url || "";
+    title.title = tab.url || "";
+    title.style.cursor = "pointer";
+    title.addEventListener("click", function () {
+      openTab(tab.id, tab.windowId);
+    });
+    titleCell.appendChild(title);
   }
 }
 
-function openTab(tabID, windowID) {
-  chrome.windows.update(windowID, { focused: true });
-  chrome.tabs.update(tabID, { active: true });
+function openTab(tabId, windowId) {
+  chrome.windows.update(windowId, { focused: true });
+  chrome.tabs.update(tabId, { active: true });
 }
 
-function closeTab(tabID) {
-  chrome.tabs.remove(tabID);
-  window.location.reload();
+function closeTab(tabId) {
+  chrome.tabs.remove(tabId).then(function () {
+    window.location.reload();
+  });
 }
 
-(async () => {
-  const { popupDisplayOption } = await chrome.storage.local.get('popupDisplayOption');
-  if (popupDisplayOption === undefined || popupDisplayOption === 'currentWindow') {
-    const tabs = await getCurrentWindowTabs();
-    displayResults(tabs);
-  } else {
-    const tabs = await getAllTabs();
-    displayResults(tabs);
-  }
-})();
-
+document.addEventListener("DOMContentLoaded", function () {
+  migrateLegacyLocalStorage().then(function () {
+    return chrome.storage.local.get(STORAGE_DEFAULTS);
+  }).then(function (settings) {
+    const query = settings.popupDisplayOption === "allWindows" ? {} : { currentWindow: true };
+    return chrome.tabs.query(query);
+  }).then(displayResults);
+});
