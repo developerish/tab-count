@@ -7,6 +7,18 @@ Manifest V3 with a service worker background script.
 
 Chrome Web Store: <https://chrome.google.com/webstore/detail/tab-count/cfokcacdaonnckdmopmcgeanhkebeaio>
 
+Attribution
+-----------
+
+This fork is seeded entirely from !sh's Tab Count project:
+<https://github.com/developerish/tab-count>
+
+That repository is the source of the extension, including its Manifest V3 port.
+Duplicate-tab detection and stale-tab closing were contributed there by rgluga.
+
+The further changes that keep those features working after Chrome stops the
+service worker were made with help from Auto, a Cursor agent.
+
 Manifest V3
 -----------
 
