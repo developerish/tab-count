@@ -6,7 +6,7 @@ Update the existing item **cfokcacdaonnckdmopmcgeanhkebeaio** rather than creati
 
 1. Run `npm run package` (Node 22 or later, plus `zip`). Upload `dist/tab-count-3.0.0.zip` using **Package → Upload new package** in the Chrome Web Store developer dashboard.
 2. Check that version 3.0.0 is newer than every previously uploaded package. If necessary, increment both `manifest.json` and `package.json`, then regenerate the ZIP.
-3. Update the store listing and privacy practices using the accurate, source-backed text below. Replace legacy screenshots with `store-assets/popup.jpg` (640×400) and `store-assets/settings.jpg` (1280×800), captured from the packaged extension in a clean Chrome for Testing profile. Both show disposable tabs. Keep the existing icon and promo tile.
+3. Update the store listing and privacy practices using the accurate, source-backed text below. Add `store-assets/popup.jpg` (640×400) and `store-assets/settings.jpg` (1280×800), captured from the packaged extension in a clean Chrome for Testing profile. Both show disposable tabs. The publisher chose to keep all five screenshots, including the three legacy images, for this release. Keep the existing icon and promo tile.
 4. Resolve any dashboard violations, account verification, contact-email, two-step verification, or developer/trader declarations. The account owner must supply personal or business identity facts and accept new legal terms.
 5. Submit the existing item for review with public distribution and automatic publication after approval. Upload acceptance and review submission do not mean the item is live; verify the dashboard and public listing separately.
 
