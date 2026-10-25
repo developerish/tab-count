@@ -1,8 +1,65 @@
 Tab Count Chrome Extension
 ==========================
 
-This repository contains the source code for the **Tab Count** Chrome extension.
-The extension displays the number of open tabs, lets you manage them, and now
-uses Manifest V3 with a service worker background script.
+Tab Count shows the number of open tabs in Chrome's toolbar and provides a
+keyboard-accessible list for switching to and closing tabs. The badge and list
+can each show the current window or all windows.
 
-Chrome Web Store: <https://chrome.google.com/webstore/detail/cfokcacdaonnckdmopmcgeanhkebei>
+Chrome Web Store: <https://chromewebstore.google.com/detail/tab-count/cfokcacdaonnckdmopmcgeanhkebeaio>
+
+Development
+-----------
+
+Requires Chrome 121+ and Node 22+ for development. No runtime dependencies or
+bundling step. Run `npm run check` for behavioral tests and JavaScript syntax
+checks. Run `npm run package` to validate and produce the upload ZIP in `dist/`.
+The packaging script requires the `zip` command (available on macOS and Linux).
+
+To test manually, open chrome://extensions, enable Developer mode, choose
+Load unpacked, and select `dist/extension` after packaging. Use a disposable
+Chrome profile, especially when testing automatic closing. Reload the extension
+after changing its files. See STORE.md for release and reviewer instructions.
+
+Manifest V3 behavior
+--------------------
+
+All worker event listeners register synchronously. Chrome may stop the worker
+when idle; no feature depends on an in-memory timer or activity-history object.
+
+- `chrome.alarms` runs the optional unused-tab check hourly. The alarm is checked
+  on every worker start and removed when the setting is turned off.
+- Unused-tab closing uses Chrome's `tabs.Tab.lastAccessed` timestamp (Chrome
+  121+) rather than maintaining a separate browsing record. It never closes
+  active, pinned, playing, loading, incognito, or browser-internal tabs. Unknown
+  or invalid timestamps are kept. The state is checked again before closing.
+- Duplicate detection compares exact HTTP(S) URLs, supports more than two
+  matches, and skips incognito tabs. Pending actions live in session storage so
+  they survive worker suspension. Clicking a notification or its first button
+  switches to the existing tab and closes the unchanged duplicate. Dismissing
+  it or choosing Keep both keeps both tabs. Buttons depend on OS support; the
+  notification body is also actionable.
+- Settings apply immediately without reloading the extension. Old MV2 settings
+  migrate when the popup or options page is first opened, preserving newer
+  preferences. Legacy auto-close is left off until explicitly enabled again.
+
+Privacy and permissions
+-----------------------
+
+Tab information stays in the browser. No network requests, remote favicons,
+analytics, content scripts, or host permissions. `tabs` supplies titles, URLs,
+and state for the list and optional management features; `storage` saves local
+preferences and session notification actions; `alarms` supports the hourly
+check; `notifications` displays opt-in duplicate prompts. Both optional features
+are off by default. Auto-close may lose unsaved work in otherwise eligible tabs.
+
+See PRIVACY.md for the published privacy policy and STORE.md for the store's
+single-purpose statement, permission justifications, and release procedure.
+
+Related contributions
+---------------------
+
+Duplicate detection and unused-tab closing were originally contributed by
+rgluga. lordvorp's PR #16 also identified service-worker lifecycle and legacy
+storage migration problems: <https://github.com/developerish/tab-count/pull/16>.
+This release addresses those problems in the existing js/background.js layout,
+using Chrome's own last-accessed timestamps and adding regression coverage.

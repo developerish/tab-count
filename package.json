@@ -1,10 +1,12 @@
 {
   "name": "tab-count",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Tab Count Chrome Extension",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "node __tests__/manifest.test.js"
+    "test": "node --test __tests__/*.test.js",
+    "check": "npm test && node scripts/check.cjs",
+    "package": "npm run check && node scripts/package.cjs"
   },
   "keywords": [],
   "author": "",
