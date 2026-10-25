@@ -1,32 +1,43 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
   <head>
-    <title>TabCount Options</title>
-    <style>
-      body { padding: 10px; }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tab Count settings</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/settings.js" defer></script>
+    <script src="js/options.js" defer></script>
   </head>
-
-  <body>
-    <h3>Popup window</h3>
-    <form name="popupOptionsForm">
-      <label><input type="radio" id ="defaultPopupSelection" name="tabCountRadios" value="currentWindow">List tabs from the current window only<br></label>
-      <label><input type="radio" name="tabCountRadios" value="allWindows">List tabs from all windows<br></label>
-    </form>
-    <label><input type="checkbox" id="tabDedupe" name="tabDedupe" value="dedupe">Detect and prompt duplicate tab creation.<br></label>
-    <label><input type="checkbox" id="tabJanitor" name="tabJanitor" value="tabJanitor"/>Auto-close tabs unused for more than 
-      <input type="number" id="tabJanitorDays" name="tabJanitorDays" value="5" min="1" max="30"/> days.</label><br>
-    <div id="status"></div>
-    <br>
-    <hr>
-    <h3>Current Stats</h3>
-    Total number of windows: <span id="windowsCount"></span> <br>
-    Total number of tabs: <span id="tabsCount"></span> <br>
-    
-    <input type="button" id="refreshButton" value="Refresh Stats">
+  <body class="options">
+    <main>
+      <h1>Tab Count settings</h1>
+      <fieldset>
+        <legend>Popup tab list</legend>
+        <label><input type="radio" name="popupDisplayOption" value="currentWindow"> Current window</label>
+        <label><input type="radio" name="popupDisplayOption" value="allWindows"> All windows</label>
+      </fieldset>
+      <fieldset>
+        <legend>Toolbar badge count</legend>
+        <label><input type="radio" name="badgeDisplayOption" value="allWindows"> All windows</label>
+        <label><input type="radio" name="badgeDisplayOption" value="currentWindow"> Current window</label>
+      </fieldset>
+      <fieldset>
+        <legend>Optional tab management</legend>
+        <label><input type="checkbox" id="tabDedupe"> Notify me when I open a duplicate page</label>
+        <p class="help">Click the notification to switch to the existing tab and close the duplicate. Dismissing it keeps both tabs.</p>
+        <label><input type="checkbox" id="tabJanitor" aria-describedby="janitorHelp"> Automatically close unused tabs</label>
+        <label class="days">Close after <input type="number" id="tabJanitorDays" value="5" min="1" max="30" step="1" required> days without being selected</label>
+        <p class="help" id="janitorHelp">Checks hourly. Active, pinned, playing, loading, incognito, and browser-internal tabs are kept. Unsaved work in other tabs could be lost. Closed tabs can usually be reopened from Chrome's History menu.</p>
+      </fieldset>
+      <p id="status" role="status"></p>
+      <section aria-labelledby="statsHeading">
+        <h2 id="statsHeading">Current counts</h2>
+        <p><span id="windowsCount">—</span> windows · <span id="tabsCount">—</span> tabs</p>
+        <button type="button" id="refreshButton">Refresh counts</button>
+      </section>
+      <footer>
+        <p>Your tab information stays in your browser. <a href="privacy.html">Privacy policy</a></p>
+      </footer>
+    </main>
   </body>
-
-  <script src="js/options.js"></script>
-
 </html>

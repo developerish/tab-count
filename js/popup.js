@@ -1,57 +1,81 @@
 "use strict";
 
-async function getCurrentWindowTabCount() {
-  const tabs = await chrome.tabs.query({ currentWindow: true });
-  const lenText = `Number of tabs on this window:<strong> ${tabs.length}</strong>`;
-  document.getElementById('windowTabs').innerHTML = lenText;
+let rendering = Promise.resolve();
+function refresh() {
+  rendering = rendering.then(renderTabs).catch(() => {
+    document.getElementById("status").textContent = "Couldn't update the tab list. Reopen the popup to try again.";
+  });
+  return rendering;
 }
 
-async function getCurrentWindowTabs() {
-  return await chrome.tabs.query({ currentWindow: true });
-}
+async function renderTabs() {
+  const settings = await getSettings();
+  const currentTabs = await chrome.tabs.query({ currentWindow: true });
+  const tabs = settings.popupDisplayOption === "allWindows"
+    ? await chrome.tabs.query({ windowType: "normal" }) : currentTabs;
+  document.getElementById("windowTabs").textContent = `${currentTabs.length} ${currentTabs.length === 1 ? "tab" : "tabs"} in this window`;
+  document.getElementById("listScope").textContent = settings.popupDisplayOption === "allWindows"
+    ? `${tabs.length} tabs across all windows` : "Current window";
+  const list = document.getElementById("tabsList");
+  list.replaceChildren();
+  document.getElementById("status").textContent = tabs.length ? "" : "No open tabs.";
 
-async function getAllTabs() {
-  return await chrome.tabs.query({});
-}
-
-async function displayResults(tabs) {
-  await getCurrentWindowTabCount();
-  const table = document.getElementById('tabsTable');
   for (const tab of tabs) {
-    const row = table.insertRow(-1);
-    const cell1 = row.insertCell(0);
-    const cell2 = row.insertCell(1);
-    const cell3 = row.insertCell(2);
-
-    if (tab.favIconUrl) {
-      cell1.innerHTML = `<img src=${tab.favIconUrl} width='16' height='16'>`;
-    }
-    cell2.innerHTML = "<span style=cursor:pointer><font color=red>X</font></span>";
-    cell3.innerHTML = `<span style=cursor:pointer title='${tab.url}'>${tab.title}</span>`;
-
-    cell2.addEventListener('click', () => closeTab(tab.id));
-    cell3.addEventListener('click', () => openTab(tab.id, tab.windowId));
+    const row = document.createElement("li");
+    const title = tab.title || tab.url || "Untitled tab";
+    const open = document.createElement("button");
+    open.type = "button";
+    open.className = "tab-title";
+    open.textContent = title;
+    open.title = tab.url || title;
+    open.addEventListener("click", async () => {
+      try {
+        await chrome.tabs.update(tab.id, { active: true });
+        await chrome.windows.update(tab.windowId, { focused: true });
+        window.close();
+      } catch {
+        await refresh();
+      }
+    });
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "close-tab";
+    close.textContent = "×";
+    close.setAttribute("aria-label", `Close ${title}`);
+    close.title = `Close ${title}`;
+    close.addEventListener("click", async () => {
+      close.disabled = true;
+      try {
+        await chrome.tabs.remove(tab.id);
+      } catch {
+        document.getElementById("status").textContent = "That tab is no longer available.";
+      }
+      await refresh();
+    });
+    row.append(open, close);
+    list.append(row);
   }
 }
 
-function openTab(tabID, windowID) {
-  chrome.windows.update(windowID, { focused: true });
-  chrome.tabs.update(tabID, { active: true });
-}
-
-function closeTab(tabID) {
-  chrome.tabs.remove(tabID);
-  window.location.reload();
-}
-
-(async () => {
-  const { popupDisplayOption } = await chrome.storage.local.get('popupDisplayOption');
-  if (popupDisplayOption === undefined || popupDisplayOption === 'currentWindow') {
-    const tabs = await getCurrentWindowTabs();
-    displayResults(tabs);
-  } else {
-    const tabs = await getAllTabs();
-    displayResults(tabs);
+document.addEventListener("DOMContentLoaded", async () => {
+  document.getElementById("optionsButton").addEventListener("click", () => {
+    chrome.runtime.openOptionsPage();
+  });
+  try {
+    await migrateLegacySettings();
+    await refresh();
+  } catch {
+    document.getElementById("status").textContent = "Couldn't load settings. Reopen the popup to try again.";
   }
-})();
+});
 
+chrome.tabs.onCreated.addListener(refresh);
+chrome.tabs.onRemoved.addListener(refresh);
+chrome.tabs.onUpdated.addListener((_id, change) => {
+  if (change.title || change.url) refresh();
+});
+chrome.tabs.onAttached.addListener(refresh);
+chrome.tabs.onDetached.addListener(refresh);
+chrome.storage.onChanged.addListener((_changes, area) => {
+  if (area === "local") refresh();
+});

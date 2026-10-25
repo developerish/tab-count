@@ -1,0 +1,19 @@
+name: Check extension
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npm run package
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tab-count-package
+          path: dist/*.zip
